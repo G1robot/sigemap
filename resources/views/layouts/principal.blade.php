@@ -100,6 +100,13 @@
                 <li class="text-xs font-black text-gray-400 px-4 mb-2 tracking-wider">OPERACIÓN DIARIA</li>
 
                 <li>
+                    <a href="{{ route('asignaciones') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('asignaciones') ? 'bg-orange-50 text-orange-600 font-bold border-l-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500' }}">
+                        <i class="fa-solid fa-list w-5 text-center {{ request()->routeIs('asignaciones') ? 'text-orange-500' : 'text-gray-400' }}"></i>
+                        <span>Asignaciones</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="{{ route('rutas.lista') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('rutas.lista') ? 'bg-orange-50 text-orange-600 font-bold border-l-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500' }}">
                         <i class="fa-solid fa-list w-5 text-center {{ request()->routeIs('rutas.lista') ? 'text-orange-500' : 'text-gray-400' }}"></i>
                         <span>Ruta Lista</span>

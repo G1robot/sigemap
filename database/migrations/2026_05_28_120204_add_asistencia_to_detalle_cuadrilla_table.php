@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('detalle_cuadrilla', function (Blueprint $table) {
+            $table->boolean('asistio')->default(false)->after('rol_en_viaje');
+            
+            $table->timestamp('hora_marcaje')->nullable()->after('asistio');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('detalle_cuadrilla', function (Blueprint $table) {
+            $table->dropColumn(['asistio', 'hora_marcaje']);
+        });
+    }
+};
