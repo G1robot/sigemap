@@ -60,7 +60,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="text-gray-500 font-bold font-mono">Bs.</span>
                             </div>
-                            <input type="number" step="0.1" wire:model="tarifa_por_viaje" 
+                            <input type="number" min="0.01" step="0.01" inputmode="decimal" wire:model="tarifa_por_viaje" 
                                 class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white">
                         </div>
                         @error('tarifa_por_viaje') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror

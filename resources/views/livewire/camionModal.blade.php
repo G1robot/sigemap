@@ -29,7 +29,7 @@
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Capacidad (Toneladas) *</label>
                     <div class="relative">
-                        <input wire:model="capacidad_ton" type="number" step="0.1" autocomplete="off" placeholder="0.0"
+                        <input wire:model="capacidad_ton" type="number" min="0.01" step="0.1" autocomplete="off" placeholder="0.0"
                             class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400 text-sm font-bold">
                             Ton.
