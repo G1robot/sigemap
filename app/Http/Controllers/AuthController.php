@@ -25,13 +25,13 @@ class AuthController extends Controller
             'password' => $request->password,
         ];
 
-        // Auth::attempt() busca al usuario y compara la contraseña encriptada
+        
         if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
-            return redirect()->intended('/'); // Redirige al inicio
+            return redirect()->intended('/'); 
         }
 
-        // Si falla, regresa con error
+        
         return back()->withErrors([
             'login_error' => 'Las credenciales proporcionadas no son correctas.',
         ])->onlyInput('usuario');

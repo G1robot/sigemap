@@ -41,7 +41,12 @@ class Usuarios extends Component
                 'regex:/^\d{6,8}(-[A-Za-z0-9]{1,2})?$/',
                 Rule::unique('usuarios', 'ci')->ignore($this->usuario_id, 'id_usuario') 
             ],
-            'telefono' => 'required|string|max:20',
+            'telefono' => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^[0-9()+\-\s]+(?:[eE]xt?\.?\s?\d+|x\d+)?$/'
+            ],
             'cargo_base' => 'required|string|max:255',
         ];
 
@@ -78,26 +83,26 @@ class Usuarios extends Component
     {
         $search = mb_strtolower(trim($this->search));
         
-        // 1. Iniciamos la consulta base con el buscador
+        
         $query = UsuarioModel::where(function($q) use ($search) {
             $q->whereRaw('LOWER(nombre_completo) LIKE ?', ["%{$search}%"])
               ->orWhereRaw('LOWER(usuario) LIKE ?', ["%{$search}%"]);
         });
 
-        // 2. Filtramos según la pestaña activa
+        
         if ($this->filtro_tipo === 'sistema') {
-            // Personal de Oficina / Despacho / Administradores
+            
             $query->whereIn('rol', ['Administrador', 'Supervisor', 'Operario']);
         } else {
-            // Trabajadores de Campo (Choferes, Ayudantes)
+            
             $query->where(function($q) {
                 $q->whereNotIn('rol', ['Administrador', 'Supervisor', 'Operario'])
                   ->orWhereNull('rol');
             });
         }
 
-        // 3. Ejecutamos la consulta
-        $usuarios = $query->orderBy('estado', 'asc') // Primero Activos, luego Inactivos
+        
+        $usuarios = $query->orderBy('estado', 'asc') 
             ->orderBy('nombre_completo', 'asc')
             ->paginate(10);
             
