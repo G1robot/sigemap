@@ -20,4 +20,9 @@ class RutaController extends Controller
     {
         return view('rutas.ruta_lista');
     }
+
+    public function gestorRutas()
+    {
+        return view('rutas.gestor_rutas');
+    }
 }

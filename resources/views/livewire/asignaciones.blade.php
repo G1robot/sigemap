@@ -33,7 +33,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($asignaciones as $item)
-                        <tr class="hover:bg-orange-50 transition-colors">
+                        <tr wire:key="asignacion-{{ $item->id_asignacion }}" class="hover:bg-orange-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="font-bold text-gray-900"><i class="fa-regular fa-calendar text-orange-500 mr-1"></i> {{ \Carbon\Carbon::parse($item->fecha)->format('d/m/Y') }}</div>
                                 <div class="text-xs text-gray-500 mt-1"><i class="fa-regular fa-clock mr-1"></i> {{ $item->turno }}</div>
@@ -50,8 +50,10 @@
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @if($item->estado_operacion == 'Programada')
                                     <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold border border-gray-200">PROGRAMADA</span>
-                                @else
-                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200"><i class="fa-solid fa-truck-fast mr-1"></i> EN RUTA</span>
+                                @elseif($item->estado_operacion == 'En Ruta')
+                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200"><i class="fa-solid fa-truck-fast mr-1"></i> EN RUTA</span>
+                                @elseif($item->estado_operacion == 'Finalizada')
+                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200"><i class="fa-solid fa-check-double mr-1"></i> FINALIZADA</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
@@ -61,11 +63,17 @@
                                         <i class="fa-solid fa-clipboard-user text-lg"></i>
                                     </button>
                                     
-                                    <button wire:click.prevent="eliminar({{$item->id_asignacion}})" 
-                                        wire:confirm="¿Seguro que deseas eliminar esta planificación?"
-                                        class="text-gray-400 hover:text-red-600 transition p-2 rounded-lg hover:bg-red-100" title="Eliminar">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
+                                    @if($item->estado_operacion == 'Programada')
+                                        <button wire:click.prevent="eliminar({{$item->id_asignacion}})" 
+                                            wire:confirm="¿Seguro que deseas eliminar esta planificación?"
+                                            class="text-gray-400 hover:text-red-600 transition p-2 rounded-lg hover:bg-red-100" title="Eliminar">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    @else
+                                        <button disabled class="text-gray-200 p-2 rounded-lg cursor-not-allowed" title="Registro bloqueado (En Operación o Finalizado)">
+                                            <i class="fa-solid fa-lock"></i>
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

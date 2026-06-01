@@ -1,14 +1,14 @@
-<div class="px-4">
+<div class="px-4 pb-10">
     
     <div class="mb-8">
-        <h2 class="text-2xl font-black text-gray-800 tracking-tight">GESTIÓN DE PERSONAL</h2>
-        <p class="text-sm text-gray-500 mt-1">Administra los accesos y roles del personal</p>
+        <h2 class="text-2xl font-black text-gray-800 tracking-tight">GESTIÓN DE PERSONAL Y USUARIOS</h2>
+        <p class="text-sm text-gray-500 mt-1">Administra los accesos al sistema y al personal operativo de recolección.</p>
     </div>
 
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         
         <button wire:click="openModal()" class="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-user-plus"></i> Nuevo Usuario
+            <i class="fa-solid fa-user-plus"></i> Nuevo Registro
         </button>
 
         <div class="relative w-full md:w-80">
@@ -16,85 +16,106 @@
                 <i class="fas fa-search text-gray-400"></i>
             </div>
             <input type="text" wire:model.live.debounce.300ms="search" 
-                placeholder="Buscar por nombre o usuario..." 
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow bg-gray-50 focus:bg-white text-sm">
+                placeholder="Buscar por nombre o CI..." 
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white text-sm shadow-sm">
         </div>
-
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="flex gap-2 border-b border-gray-200 mb-6">
+        <button wire:click="setFiltro('sistema')" 
+            class="px-5 py-3 text-sm font-bold transition-all border-b-2 {{ $filtro_tipo === 'sistema' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+            <i class="fa-solid fa-laptop-code mr-2"></i> Usuarios del Sistema
+        </button>
+        <button wire:click="setFiltro('campo')" 
+            class="px-5 py-3 text-sm font-bold transition-all border-b-2 {{ $filtro_tipo === 'campo' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+            <i class="fa-solid fa-hard-hat mr-2"></i> Trabajadores de Campo
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
+        <div wire:loading wire:target="setFiltro, search" class="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
+            <i class="fa-solid fa-spinner fa-spin text-3xl text-orange-500"></i>
+        </div>
+
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-                        <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Contacto</th>
-                        <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Credenciales</th>
-                        <th class="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Rol</th>
-                        <th class="px-6 py-3 text-right font-bold text-gray-500 uppercase tracking-wider">Acción</th>
+                        <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase">Nombre Completo</th>
+                        <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase">Cargo / Contacto</th>
+                        
+                        @if($filtro_tipo === 'sistema')
+                            <th class="px-6 py-3 text-left font-bold text-gray-500 uppercase">Credenciales</th>
+                        @else
+                            <th class="px-6 py-3 text-center font-bold text-gray-500 uppercase">Tarifa por Viaje</th>
+                        @endif
+
+                        <th class="px-6 py-3 text-center font-bold text-gray-500 uppercase">Rol</th>
+                        <th class="px-6 py-3 text-right font-bold text-gray-500 uppercase">Acción</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($usuarios as $item)
-                        <tr wire:key="usuario-{{ $item->id_usuario }}" class="hover:bg-orange-50 transition-colors group {{ $item->estado == 'Inactivo' ? 'opacity-60 bg-gray-50' : '' }}">
+                        <tr wire:key="usuario-{{ $item->id_usuario }}" class="hover:bg-gray-50 transition-colors group {{ $item->estado == 'Inactivo' ? 'opacity-60 bg-gray-50' : '' }}">
                             
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="font-bold text-gray-900 flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                                        <i class="fa-solid fa-user"></i>
+                                <div class="font-bold text-gray-900 flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold
+                                        {{ $filtro_tipo === 'sistema' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600' }}">
+                                        {{ substr($item->nombre_completo, 0, 1) }}
                                     </div>
                                     <div class="flex flex-col">
-                                        <span>{{ $item->nombre_completo }}</span>
-                                        <span class="text-xs font-normal mt-0.5">
+                                        <span class="text-base">{{ $item->nombre_completo }}</span>
+                                        <span class="text-xs font-bold mt-0.5">
                                             @if($item->estado == 'Activo')
-                                                <span class="text-green-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Activo</span>
+                                                <span class="text-green-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i>ACTIVO</span>
                                             @else
-                                                <span class="text-red-500"><i class="fa-solid fa-circle text-[8px] mr-1"></i>De Baja</span>
+                                                <span class="text-red-500"><i class="fa-solid fa-circle text-[8px] mr-1"></i>BAJA</span>
                                             @endif
                                         </span>
                                     </div>
                                 </div>
                             </td>
 
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-col">
-                                    <span><i class="fa-solid fa-phone text-xs text-gray-400 mr-1"></i> {{ $item->telefono }}</span>
-                                    <span class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-briefcase mr-1"></i> {{ $item->cargo_base }}</span>
+                                    <span class="font-bold text-gray-700">{{ $item->cargo_base }}</span>
+                                    <span class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-phone text-gray-400 mr-1"></i> {{ $item->telefono ?? 'Sin número' }}</span>
                                 </div>
                             </td>
 
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($item->usuario)
-                                    <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-gray-600 border border-gray-200">
-                                        <i class="fa-solid fa-at text-orange-400 mr-1"></i>{{ $item->usuario }}
+                            @if($filtro_tipo === 'sistema')
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($item->usuario)
+                                        <span class="font-mono text-sm font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">
+                                            <i class="fa-solid fa-at mr-1 opacity-50"></i>{{ $item->usuario }}
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-gray-400 italic">Sin acceso</span>
+                                    @endif
+                                </td>
+                            @else
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <span class="bg-green-50 text-green-700 font-bold px-3 py-1.5 rounded-lg border border-green-200">
+                                        Bs. {{ number_format($item->tarifa_por_viaje ?? 0, 2) }}
                                     </span>
-                                @else
-                                    <span class="text-xs text-gray-400 italic bg-gray-50 px-2 py-1 rounded">
-                                        Sin acceso al sistema
-                                    </span>
-                                @endif
-                            </td>
+                                </td>
+                            @endif
 
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @if($item->rol === 'administrador')
-                                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
-                                        ADMINISTRADOR
-                                    </span>
+                                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-purple-200">Admin</span>
                                 @elseif($item->rol === 'personal')
-                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200">
-                                        SISTEMA / DESPACHO
-                                    </span>
+                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-blue-200">Despacho</span>
                                 @else
-                                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold border border-gray-200">
-                                        TRABAJO DE CAMPO
-                                    </span>
+                                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-orange-200">Campo</span>
                                 @endif
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="flex justify-end gap-1">
                                     <button wire:click.prevent="editar({{$item->id_usuario}})" 
-                                        class="text-gray-400 hover:text-orange-600 transition p-2 rounded-lg hover:bg-orange-100" title="Editar Personal">
+                                        class="text-gray-400 hover:text-orange-600 transition p-2 rounded-lg hover:bg-orange-100" title="Editar">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     
@@ -106,20 +127,20 @@
                                         </button>
                                     @else
                                         <button wire:click.prevent="restaurar({{$item->id_usuario}})" 
-                                            wire:confirm="¿Estás seguro de que deseas restaurar a este personal?"
-                                            class="text-gray-400 hover:text-green-600 transition p-2 rounded-lg hover:bg-green-100" title="Restaurar Personal">
+                                            wire:confirm="¿Restaurar a este personal al servicio activo?"
+                                            class="text-gray-400 hover:text-green-600 transition p-2 rounded-lg hover:bg-green-100" title="Restaurar">
                                             <i class="fa-solid fa-undo"></i>
                                         </button>
                                     @endif
-                                </div>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
-                                <div class="text-gray-300 mb-3"><i class="fa-solid fa-users-slash text-4xl"></i></div>
-                                <p class="text-gray-500">No hay personal registrado o no coinciden con la búsqueda.</p>
+                            <td colspan="5" class="px-6 py-16 text-center">
+                                <div class="text-gray-200 mb-4"><i class="fa-solid fa-users-slash text-5xl"></i></div>
+                                <h3 class="text-lg font-bold text-gray-700 mb-1">Sin resultados</h3>
+                                <p class="text-gray-500">No hay {{ $filtro_tipo === 'sistema' ? 'usuarios del sistema' : 'trabajadores de campo' }} registrados.</p>
                             </td>
                         </tr>
                     @endforelse

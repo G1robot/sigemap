@@ -53,6 +53,19 @@
                         </select>
                         @error('cargo_base') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tarifa de Pago por Viaje (Bs.) *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 font-bold font-mono">Bs.</span>
+                            </div>
+                            <input type="number" step="0.1" wire:model="tarifa_por_viaje" 
+                                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white">
+                        </div>
+                        @error('tarifa_por_viaje') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        <p class="text-[10px] text-gray-400 mt-1">Se autocompleta según el cargo, pero puedes personalizarla.</p>
+                    </div>
                 </div>
             </div>
 

@@ -23,6 +23,7 @@ class UsuarioModel extends Authenticatable
         'cargo_base',
         'rol',
         'estado',
+        'tarifa_por_viaje'
     ];
 
     protected $hidden = [

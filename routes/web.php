@@ -7,6 +7,10 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CamionController;
 use App\Http\Controllers\RutaController;
 use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\BotaderoController;
+use App\Http\Controllers\PlanillaController;
+use App\Http\Controllers\ContingenciaController;
+use App\Http\Controllers\ReporteController;
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -20,4 +24,11 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/rutas/zonas', [RutaController::class, 'zonas'])->name('rutas.zonas');
     Route::get('/rutas/lista', [RutaController::class, 'rutaLista'])->name('rutas.lista');
     Route::get('/asignaciones', [AsignacionController::class, 'index'])->name('asignaciones');
+    Route::get('/botaderos', [BotaderoController::class, 'index'])->name('botaderos');
+    Route::get('/planillas', [PlanillaController::class, 'index'])->name('planillas');
+    Route::get('/contingencias', [ContingenciaController::class, 'index'])->name('contingencias');
+    Route::get('/rutas/gestor', [RutaController::class, 'gestorRutas'])->name('rutas.gestor');
+
+    // Rutas para reportes
+    Route::get('/reportes/dashboard', [ReporteController::class, 'dashboard'])->name('reportes.dashboard');
 });

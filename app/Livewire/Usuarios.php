@@ -26,6 +26,9 @@ class Usuarios extends Component
     public $rol = '';
     public $estado = 'Activo';
     public $usuario_id ='';
+    public $tarifa_por_viaje = 80;
+
+    public $filtro_tipo = 'sistema';
 
     protected function rules()
     {
@@ -60,11 +63,41 @@ class Usuarios extends Component
         return $reglas;
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function setFiltro($tipo)
+    {
+        $this->filtro_tipo = $tipo;
+        $this->resetPage();
+    }
+
     public function render()
     {
         $search = mb_strtolower(trim($this->search));
-        $usuarios = UsuarioModel::whereRaw('LOWER(nombre_completo) LIKE ?', ["%{$search}%"])
-            ->orWhereRaw('LOWER(usuario) LIKE ?', ["%{$search}%"])
+        
+        // 1. Iniciamos la consulta base con el buscador
+        $query = UsuarioModel::where(function($q) use ($search) {
+            $q->whereRaw('LOWER(nombre_completo) LIKE ?', ["%{$search}%"])
+              ->orWhereRaw('LOWER(usuario) LIKE ?', ["%{$search}%"]);
+        });
+
+        // 2. Filtramos según la pestaña activa
+        if ($this->filtro_tipo === 'sistema') {
+            // Personal de Oficina / Despacho / Administradores
+            $query->whereIn('rol', ['Administrador', 'Supervisor', 'Operario']);
+        } else {
+            // Trabajadores de Campo (Choferes, Ayudantes)
+            $query->where(function($q) {
+                $q->whereNotIn('rol', ['Administrador', 'Supervisor', 'Operario'])
+                  ->orWhereNull('rol');
+            });
+        }
+
+        // 3. Ejecutamos la consulta
+        $usuarios = $query->orderBy('estado', 'asc') // Primero Activos, luego Inactivos
             ->orderBy('nombre_completo', 'asc')
             ->paginate(10);
             
@@ -110,6 +143,7 @@ class Usuarios extends Component
             $usuario->telefono = $this->telefono;
             $usuario->cargo_base = $this->cargo_base;
             $usuario->estado = $this->estado;
+            $usuario->tarifa_por_viaje = $this->tarifa_por_viaje;
 
             if ($this->es_usuario_sistema) {
                 $usuario->usuario = $this->usuario;
@@ -134,6 +168,7 @@ class Usuarios extends Component
                 'usuario' => $this->es_usuario_sistema ? $this->usuario : null,
                 'password' => ($this->es_usuario_sistema && $this->contrasena) ? Hash::make($this->contrasena) : null,
                 'rol' => $this->es_usuario_sistema ? $this->rol : null,
+                'tarifa_por_viaje' => $this->tarifa_por_viaje
             ]);
         }
 
@@ -154,7 +189,8 @@ class Usuarios extends Component
         $this->telefono = $usuario->telefono;
         $this->cargo_base = $usuario->cargo_base;
         $this->estado = $usuario->estado;
-        
+        $this->tarifa_por_viaje = $usuario->tarifa_por_viaje;
+
         if ($usuario->usuario != null) {
             $this->es_usuario_sistema = true;
             $this->usuario = $usuario->usuario;
@@ -188,5 +224,16 @@ class Usuarios extends Component
             'icon' => 'success', 
             'title' => 'Personal reactivado exitosamente'
         ]);
+    }
+
+    public function updatedCargoBase($value)
+    {
+        if ($value === 'Chofer') {
+            $this->tarifa_por_viaje = 120;
+        } elseif ($value === 'Ayudante') {
+            $this->tarifa_por_viaje = 80;
+        } else {
+            $this->tarifa_por_viaje = 0;
+        }
     }
 }
