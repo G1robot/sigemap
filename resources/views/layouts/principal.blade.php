@@ -99,24 +99,36 @@
                 <img src="{{ asset('img/logo_emap.png') }}" alt="Logo SIG-EMAP" class="w-full max-w-[160px] mx-auto drop-shadow-sm">
             </a>
 
+            @php 
+                $rol = Auth::user()->rol; 
+                $esAdmin = $rol === 'Administrador';
+                $esSupervisor = $rol === 'Supervisor';
+                $esOperario = $rol === 'Operario';
+            @endphp
+
             <ul class="space-y-1 text-sm font-medium">
 
                 <li class="text-xs font-black text-gray-400 px-4 mb-2 tracking-wider">OPERACIÓN DIARIA</li>
 
+                @if($esAdmin || $esSupervisor)
                 <li>
                     <a href="{{ route('asignaciones') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('asignaciones') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-list w-5 text-center {{ request()->routeIs('asignaciones') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
                         <span>Asignaciones</span>
                     </a>
                 </li>
+                @endif
 
+                @if($esAdmin || $esSupervisor || $esOperario)
                 <li>
                     <a href="{{ route('botaderos') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('botaderos') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-trash w-5 text-center {{ request()->routeIs('botaderos') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
                         <span>Botaderos</span>
                     </a>
                 </li>
+                @endif
                 
+                @if($esAdmin)
                 <li>
                     <a href="{{ route('rutas.gestor') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('rutas.gestor') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-tachometer-alt w-5 text-center {{ request()->routeIs('rutas.gestor') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
@@ -130,7 +142,9 @@
                         <span>Zonas</span>
                     </a>
                 </li>
+                @endif
 
+                @if($esAdmin || $esSupervisor)
                 <li>
                     <a href="{{ route('contingencias') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('contingencias') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-triangle-exclamation w-5 text-center {{ request()->routeIs('contingencias') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
@@ -153,19 +167,20 @@
                         <span>Usuarios</span>
                     </a>
                 </li>
+                @endif
+
+                @if($esAdmin)
                 <li>
                     <a href="{{ route('camiones') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('camiones') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-truck w-5 text-center {{ request()->routeIs('camiones') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
                         <span>Camiones</span>
                     </a>
                 </li>
+                @endif
+
+                @if($esAdmin || $esSupervisor)
                 <li class="text-xs font-black text-gray-400 px-4 mt-8 mb-2 tracking-wider border-t pt-4">REPORTES</li>
-                {{-- <li>
-                    <a href="{{ route('reportes') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('estudiantes') ? 'bg-orange-50 text-orange-600 font-bold border-l-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500' }}">
-                        <i class="fa-solid fa-user-graduate w-5 text-center {{ request()->routeIs('estudiantes') ? 'text-orange-500' : 'text-gray-400' }}"></i>
-                        <span>Estudiantes</span>
-                    </a>
-                </li> --}}
+                
                 <li>
                     <a href="{{ route('reportes.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('reportes.dashboard') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-chart-bar w-5 text-center {{ request()->routeIs('reportes.dashboard') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
@@ -179,13 +194,16 @@
                         <span>Financiero</span>
                     </a>
                 </li>
+                @endif
 
+                @if($esAdmin)
                 <li>
                     <a href="{{ route('reportes.camiones') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('reportes.camiones') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
                         <i class="fa-solid fa-truck w-5 text-center {{ request()->routeIs('reportes.camiones') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
-                        <span>Camiones</span>
+                        <span>Reporte Camiones</span>
                     </a>
                 </li>
+                @endif
             </ul>
             
             <div class="h-20"></div>

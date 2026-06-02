@@ -10,12 +10,14 @@
         <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
             
             @if($modo === 'lista')
+                @if(Auth::user()->rol === 'Administrador' || Auth::user()->rol === 'Supervisor')
                 <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                     <h3 class="font-bold text-gray-700">Catálogo de Rutas</h3>
                     <button wire:click="cambiarModo('crear')" class="bg-emap-blue hover:bg-blue-900 text-white text-xs font-bold py-2 px-3 rounded-lg transition-colors shadow-sm">
                         <i class="fa-solid fa-plus mr-1"></i> Nuevo Trazado
                     </button>
                 </div>
+                @endif
 
                 <div class="p-4 border-b border-gray-100">
                     <div class="relative w-full">
@@ -39,6 +41,7 @@
                                         <span class="ml-1 text-[9px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold uppercase align-middle">Inactiva</span>
                                     @endif
                                 </div>
+                                @if(Auth::user()->rol === 'Administrador' || Auth::user()->rol === 'Supervisor')
                                 <div class="flex gap-1">
                                     <button wire:click.stop="editar({{ $item->id_ruta }})" class="text-gray-400 hover:text-emap-gold transition-colors p-1">
                                         <i class="fa-solid fa-pen"></i>
@@ -54,6 +57,7 @@
                                         </button>
                                     @endif
                                 </div>
+                                @endif
                             </div>
                             
                             <div class="flex flex-col gap-1 text-xs text-gray-500 font-medium mt-2">

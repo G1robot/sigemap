@@ -1,5 +1,5 @@
 @extends('layouts.principal')
 @section('content')
-@livewire('Usuarios')
+@livewire('Botadero')
 
 @endsection
