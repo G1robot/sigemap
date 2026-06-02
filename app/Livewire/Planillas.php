@@ -19,6 +19,8 @@ class Planillas extends Component
     public $showModal = false;
     public $usuario_seleccionado_id = null;
 
+    public $boleta_impresion = null;
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -110,6 +112,7 @@ class Planillas extends Component
         try {
             $fecha_pago = Carbon::now();
             $viajes_pagados = 0;
+            $monto_total_pagado = 0;
 
             foreach ($viajes_pendientes as $viaje) {
                 PagoPersonalModel::create([
@@ -119,18 +122,32 @@ class Planillas extends Component
                     'fecha' => $fecha_pago
                 ]);
                 $viajes_pagados++;
+                $monto_total_pagado += $trabajador->tarifa_por_viaje;
             }
 
             DB::commit();
             
+            $this->boleta_impresion = [
+                'nombre' => $trabajador->nombre_completo,
+                'ci' => $trabajador->ci,
+                'cargo' => $trabajador->cargo_base,
+                'fecha_emision' => $fecha_pago->format('d/m/Y H:i'),
+                'recibo_nro' => 'EMP-' . str_pad($id_usuario . date('Hs'), 6, '0', STR_PAD_LEFT),
+                'cantidad_viajes' => $viajes_pagados,
+                'tarifa' => $trabajador->tarifa_por_viaje,
+                'total_pagado' => $monto_total_pagado
+            ];
+
             if ($this->usuario_seleccionado_id == $id_usuario) {
                 $this->closeModal();
             }
 
-            $this->dispatch('toast', [
-                'icon' => 'success', 
-                'title' => "Liquidación completada: Se pagaron $viajes_pagados viajes a {$trabajador->nombre_completo}."
-            ]);
+            // $this->dispatch('toast', [
+            //     'icon' => 'success', 
+            //     'title' => "Liquidación completada. Generando boleta..."
+            // ]);
+
+            $this->dispatch('imprimir-boleta');
 
         } catch (\Exception $e) {
             DB::rollBack();

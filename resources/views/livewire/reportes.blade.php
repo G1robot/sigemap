@@ -2,21 +2,27 @@
     <div class="mb-6 flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
             <h2 class="text-2xl font-black text-gray-800 tracking-tight">DASHBOARD GERENCIAL</h2>
-            <p class="text-sm text-gray-500 mt-1">Indicadores de rendimiento de recolección de residuos sólidos.</p>
+            <p class="text-sm text-gray-500 mt-1 print:hidden">Indicadores de rendimiento de recolección de residuos sólidos.</p>
         </div>
 
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex flex-col sm:flex-row items-center gap-3">
-            <div class="flex items-center gap-2 text-emap-blue font-bold px-2">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span class="text-sm uppercase tracking-wider">Filtro:</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-400 font-bold">DESDE</span>
-                <input type="date" wire:model.live="fecha_inicio" class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emap-gold bg-gray-50 text-gray-700 font-bold">
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-400 font-bold">HASTA</span>
-                <input type="date" wire:model.live="fecha_fin" class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emap-gold bg-gray-50 text-gray-700 font-bold">
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="print:hidden bg-emap-blue hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> Exportar PDF
+            </button>
+
+            <div class="print:hidden bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex flex-col sm:flex-row items-center gap-3">
+                <div class="flex items-center gap-2 text-emap-blue font-bold px-2">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span class="text-sm uppercase tracking-wider">Filtro:</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400 font-bold">DESDE</span>
+                    <input type="date" wire:model.live="fecha_inicio" class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emap-gold bg-gray-50 text-gray-700 font-bold">
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400 font-bold">HASTA</span>
+                    <input type="date" wire:model.live="fecha_fin" class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emap-gold bg-gray-50 text-gray-700 font-bold">
+                </div>
             </div>
         </div>
     </div>

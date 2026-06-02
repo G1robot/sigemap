@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\ZonaModel;
+use App\Models\RutaModel;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
 
@@ -25,17 +26,23 @@ class Zonas extends Component
                 'required',
                 'string',
                 'max:100',
+                'regex:/^[\pL\pN\s\-\.,#()]+$/u', 
                 Rule::unique('zonas', 'nombre_zona')->ignore($this->zona_id, 'id_zona') 
             ],
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:500',
         ];
     }
+
+    protected $messages = [
+        'nombre_zona.regex' => 'El nombre contiene caracteres especiales no permitidos.',
+        'nombre_zona.unique' => 'Ya existe una zona registrada con este nombre exacto.'
+    ];
 
     public function render()
     {
         $search = mb_strtolower(trim($this->search));
         $zonas = ZonaModel::whereRaw('LOWER(nombre_zona) LIKE ?', ["%{$search}%"])
-            ->orderBy('id_zona', 'desc')
+            ->orderBy('nombre_zona', 'asc')
             ->paginate(10);
             
         return view('livewire.zonas', compact('zonas'));
@@ -81,7 +88,7 @@ class Zonas extends Component
         $this->closeModal();
         $this->dispatch('toast', [
             'icon' => 'success', 
-            'title' => 'Zona guardada exitosamente'
+            'title' => 'Zona territorial guardada exitosamente'
         ]);
     }
 
@@ -97,6 +104,16 @@ class Zonas extends Component
     
     public function eliminar($id)
     {
+        $rutasActivas = RutaModel::where('id_zona', $id)->count();
+
+        if ($rutasActivas > 0) {
+            $this->dispatch('toast', [
+                'icon' => 'error', 
+                'title' => "Denegado: Esta zona tiene $rutasActivas rutas asociadas. Reasígnalas primero."
+            ]);
+            return;
+        }
+
         $zona = ZonaModel::findOrFail($id);
         $zona->delete();
 

@@ -12,7 +12,8 @@ class RutaModel extends Model
         'id_zona',
         'nombre_ruta',
         'horario_permitido',
-        'geom'
+        'geom',
+        'estado'
     ];
 
     public function zona()

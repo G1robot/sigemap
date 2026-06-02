@@ -28,6 +28,7 @@ class Botadero extends Component
         ->where('estado_operacion', 'En Ruta')
         ->orderBy('fecha', 'asc')
         ->get();
+
         return view('livewire.botadero', compact('viajes_activos'));
     }
 
@@ -55,9 +56,13 @@ class Botadero extends Component
 
     public function guardarDescarga()
     {
+        $tolerancia = $this->capacidad_maxima * 1.10;
+
         $this->validate([
-            'peso_descargado' => 'required|numeric|min:0.1',
+            'peso_descargado' => 'required|numeric|min:0.1|max:' . $tolerancia,
             'accion_post_descarga' => 'required|in:retornar,finalizar'
+        ], [
+            'peso_descargado.max' => '¡Alerta! El peso ingresado supera la capacidad máxima del camión más el margen de tolerancia permitido (Límite: ' . number_format($tolerancia, 2) . ' Ton).'
         ]);
 
         DB::beginTransaction();

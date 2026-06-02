@@ -1,4 +1,4 @@
-<div class="px-4">
+<div class="px-4 pb-10">
     
     <div class="mb-8">
         <h2 class="text-2xl font-black text-gray-800 tracking-tight">FLOTA DE VEHÍCULOS</h2>
@@ -6,7 +6,7 @@
     </div>
 
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <button wire:click="openModal()" class="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+        <button wire:click="openModal()" class="w-full md:w-auto bg-emap-blue hover:bg-blue-900 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
             <i class="fa-solid fa-truck-medical"></i> Nuevo Vehículo
         </button>
 
@@ -16,7 +16,7 @@
             </div>
             <input type="text" wire:model.live.debounce.300ms="search" 
                 placeholder="Buscar por placa o modelo..." 
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow bg-gray-50 focus:bg-white text-sm">
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow bg-gray-50 focus:bg-white text-sm">
         </div>
     </div>
 
@@ -34,11 +34,11 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($camiones as $item)
-                        <tr wire:key="camion-{{ $item->id_camion }}" class="hover:bg-orange-50 transition-colors group {{ $item->estado_operativo == 'Fuera de Servicio' ? 'opacity-60 bg-gray-50' : '' }}">
+                        <tr wire:key="camion-{{ $item->id_camion }}" class="hover:bg-blue-50 transition-colors group {{ $item->estado_operativo == 'Fuera de Servicio' ? 'opacity-60 bg-gray-50' : '' }}">
                             
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="font-bold text-gray-900 flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-emap-blue shadow-inner border border-blue-200">
                                         <i class="fa-solid fa-truck"></i>
                                     </div>
                                     <div class="flex flex-col">
@@ -54,7 +54,7 @@
                                 </span>
                             </td>
 
-                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-600">
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-600 font-medium">
                                 {{ $item->dimension_tipo }}
                             </td>
 
@@ -93,7 +93,7 @@
                                     @endif
 
                                     <button wire:click.prevent="editar({{$item->id_camion}})" 
-                                        class="text-gray-400 hover:text-orange-600 transition p-2 rounded-lg hover:bg-orange-100" title="Editar Vehículo">
+                                        class="text-gray-400 hover:text-emap-blue transition p-2 rounded-lg hover:bg-blue-100" title="Editar Vehículo">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     

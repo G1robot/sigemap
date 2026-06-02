@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\UsuarioModel;
+use App\Models\DetalleCuadrillaModel;
 use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
@@ -33,7 +34,7 @@ class Usuarios extends Component
     protected function rules()
     {
         $reglas = [
-            'nombre_completo' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
+            'nombre_completo' => 'required|string|regex:/^[\pL\s\.]+$/u|max:255',
             'ci' => [
                 'required',
                 'string',
@@ -44,9 +45,15 @@ class Usuarios extends Component
             'telefono' => [
                 'required',
                 'string',
-                'max:20',
-                'regex:/^[0-9()+\-\s]+(?:[eE]xt?\.?\s?\d+|x\d+)?$/'
+                'max:8',
+                'regex:/^[0-9]{1,8}$/'
             ],
+            // 'telefono' => [
+            //     'required',
+            //     'string',
+            //     'max:20',
+            //     'regex:/^[0-9()+\-\s]+(?:[eE]xt?\.?\s?\d+|x\d+)?$/'
+            // ],
             'cargo_base' => 'required|string|max:255',
         ];
 
@@ -68,6 +75,15 @@ class Usuarios extends Component
         return $reglas;
     }
 
+    protected $messages = [
+        'ci.unique' => 'ATENCIÓN: Esta Cédula de Identidad ya está registrada en el sistema.',
+        'ci.regex' => 'El formato del C.I. es incorrecto (Ej: 1234567 o 1234567-1A).',
+        'telefono.regex' => 'El formato del teléfono no es válido.',
+        'usuario.unique' => 'ATENCIÓN: Este nombre de usuario ya está en uso, elige otro.',
+        'contrasena1.same' => 'Las contraseñas no coinciden.',
+        'nombre_completo.regex' => 'El nombre solo puede contener letras y espacios.'
+    ];
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -83,24 +99,19 @@ class Usuarios extends Component
     {
         $search = mb_strtolower(trim($this->search));
         
-        
         $query = UsuarioModel::where(function($q) use ($search) {
             $q->whereRaw('LOWER(nombre_completo) LIKE ?', ["%{$search}%"])
               ->orWhereRaw('LOWER(usuario) LIKE ?', ["%{$search}%"]);
         });
-
         
         if ($this->filtro_tipo === 'sistema') {
-            
             $query->whereIn('rol', ['Administrador', 'Supervisor', 'Operario']);
         } else {
-            
             $query->where(function($q) {
                 $q->whereNotIn('rol', ['Administrador', 'Supervisor', 'Operario'])
                   ->orWhereNull('rol');
             });
         }
-
         
         $usuarios = $query->orderBy('estado', 'asc') 
             ->orderBy('nombre_completo', 'asc')
@@ -133,6 +144,7 @@ class Usuarios extends Component
         $this->cargo_base = '';
         $this->rol = '';
         $this->estado = 'Activo';
+        $this->tarifa_por_viaje = 80;
         $this->usuario_id = '';
         $this->es_usuario_sistema = false;
     }
@@ -207,8 +219,22 @@ class Usuarios extends Component
         $this->showModal = true;
     }   
     
+    private function verificarSiEstaEnRuta($id)
+    {
+        return DetalleCuadrillaModel::where('id_usuario', $id)
+            ->whereHas('asignacion', function($query) {
+                $query->whereIn('estado_operacion', ['Programada', 'En Ruta']);
+            })
+            ->exists();
+    }
+
     public function eliminar($id)
     {
+        if ($this->verificarSiEstaEnRuta($id)) {
+            $this->dispatch('toast', ['icon' => 'error', 'title' => 'Denegado: Este personal está asignado a un viaje en curso o programado.']);
+            return;
+        }
+
         $usuario = UsuarioModel::findOrFail($id);
         $usuario->estado = 'Inactivo';
         $usuario->save();

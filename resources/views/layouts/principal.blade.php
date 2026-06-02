@@ -45,7 +45,7 @@
     {{-- ========================================== --}}
     {{-- TOP NAVBAR (AHORA USA EL AZUL INSTITUCIONAL) --}}
     {{-- ========================================== --}}
-    <nav class="fixed top-0 z-50 w-full bg-emap-blue shadow-lg border-b border-emap-blue h-16">
+    <nav class="fixed top-0 z-50 w-full bg-emap-blue shadow-lg border-b border-emap-blue h-16 print:hidden">
         <div class="px-5 h-full flex justify-between items-center">
 
             <a href="{{ route('home') }}" class="flex items-center gap-3">
@@ -92,7 +92,7 @@
     {{-- ========================================== --}}
     {{-- SIDEBAR LATERAL (CON TOQUES VERDES Y AZULES)--}}
     {{-- ========================================== --}}
-    <aside class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 pt-16 shadow-sm z-40">
+    <aside class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 pt-16 shadow-sm z-40 print:hidden">
         <div class="h-full overflow-y-auto no-scrollbar px-3 py-6">
 
             <a href="{{ route('home') }}" class="block text-center mb-8 px-4 mt-2 transition-transform hover:scale-105">
@@ -172,14 +172,28 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="{{ route('reportes.financiero') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('reportes.financiero') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
+                        <i class="fa-solid fa-dollar-sign w-5 text-center {{ request()->routeIs('reportes.financiero') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
+                        <span>Financiero</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('reportes.camiones') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('reportes.camiones') ? 'bg-blue-50 text-emap-blue font-bold border-l-4 border-emap-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-emap-green' }}">
+                        <i class="fa-solid fa-truck w-5 text-center {{ request()->routeIs('reportes.camiones') ? 'text-emap-blue' : 'text-gray-400' }}"></i>
+                        <span>Camiones</span>
+                    </a>
+                </li>
             </ul>
             
             <div class="h-20"></div>
         </div>
     </aside>
 
-    <main class="p-4 sm:ml-64 mt-16 min-h-screen bg-gray-50">
-        <div class="bg-white shadow-sm border border-gray-100 rounded-2xl p-6 min-h-[80vh]">
+    <main class="p-4 sm:ml-64 mt-16 min-h-screen bg-gray-50 print:m-0 print:p-0 print:bg-white">
+        <div class="bg-white shadow-sm border border-gray-100 rounded-2xl p-6 min-h-[80vh] print:border-none print:shadow-none print:p-0">
             @yield('content')
         </div>
     </main>

@@ -10,4 +10,14 @@ class ReporteController extends Controller
     {
         return view('reportes.dashboard');
     }
+
+    public function reporteCamiones()
+    {
+        return view('reportes.reporte_camiones');
+    }
+
+    public function reporteFinanciero()
+    {
+        return view('reportes.reporte_financiero');
+    }
 }

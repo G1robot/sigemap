@@ -1,9 +1,9 @@
 <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm z-50 animate-fade-in-down">
-    <div class="max-w-4xl w-full mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="max-w-4xl w-full mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-emap-blue">
         
         <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-800">
-                <i class="fa-solid fa-user-shield mr-2 text-orange-500"></i>
+                <i class="fa-solid fa-user-shield mr-2 text-emap-blue"></i>
                 {{ $usuario_id ? 'Editar Personal' : 'Registrar Nuevo Personal' }}
             </h2>
             <button wire:click="closeModal" class="text-gray-400 hover:text-red-500 transition text-xl">&times;</button>
@@ -18,15 +18,15 @@
                     <div class="lg:col-span-2">
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nombre Completo *</label>
                         <input wire:model="nombre_completo" type="text" autocomplete="off"
-                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
-                        @error('nombre_completo') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
+                        @error('nombre_completo') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">C.I. *</label>
                         <input wire:model="ci" type="text" autocomplete="off"
-                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
-                        @error('ci') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
+                        @error('ci') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
@@ -36,15 +36,15 @@
                                 <i class="fa-solid fa-phone text-gray-400 text-xs"></i>
                             </div>
                             <input wire:model="telefono" type="text" autocomplete="off"
-                                class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
+                                class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
                         </div>
-                        @error('telefono') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('telefono') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="lg:col-span-2">
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo / Puesto *</label>
                         <select wire:model="cargo_base" 
-                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow bg-white">
+                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow bg-white">
                             <option value="">Seleccione un cargo...</option>
                             <option value="Chofer">Chofer de Compactador</option>
                             <option value="Ayudante">Ayudante (Recolector)</option>
@@ -60,11 +60,11 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="text-gray-500 font-bold font-mono">Bs.</span>
                             </div>
-                            <input type="number" min="0.01" step="0.01" inputmode="decimal" wire:model="tarifa_por_viaje" 
-                                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white">
+                            <input type="number" min="0" step="0.5" inputmode="decimal" wire:model="tarifa_por_viaje" 
+                                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emap-blue bg-white">
                         </div>
-                        @error('tarifa_por_viaje') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        <p class="text-[10px] text-gray-400 mt-1">Se autocompleta según el cargo, pero puedes personalizarla.</p>
+                        @error('tarifa_por_viaje') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
+                        <p class="text-[10px] text-gray-400 mt-1">Se autocompleta según el cargo.</p>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
             <div class="bg-gray-50 -mx-6 px-6 py-4 border-y border-gray-100 mb-6">
                 <div class="flex items-center">
                     <input type="checkbox" id="es_usuario_sistema" wire:model.live="es_usuario_sistema" 
-                        class="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded cursor-pointer transition-colors">
+                        class="h-5 w-5 text-emap-blue focus:ring-emap-blue border-gray-300 rounded cursor-pointer transition-colors">
                     <label for="es_usuario_sistema" class="ml-3 block text-sm text-gray-900 font-bold cursor-pointer">
                         Habilitar acceso al sistema SIG-EMAP (Asignar Usuario y Contraseña)
                     </label>
@@ -91,19 +91,19 @@
                                     <i class="fa-solid fa-at text-gray-400 text-xs"></i>
                                 </div>
                                 <input wire:model="usuario" type="text" autocomplete="off" placeholder="Ej: jperez"
-                                    class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
+                                    class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
                             </div>
-                            @error('usuario') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @error('usuario') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nivel de Acceso (Rol) *</label>
                             <select wire:model="rol" 
-                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow bg-white">
+                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow bg-white">
                                 <option value="">Seleccione un rol...</option>
-                                <option value="Operario">Operario</option>
+                                <option value="Operario">Operario (Despacho)</option>
                                 <option value="Supervisor">Supervisor</option>
-                                <option value="Administrador">Administrador</option>
+                                <option value="Administrador">Administrador General</option>
                             </select>
                             @error('rol') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -113,15 +113,15 @@
                                 Contraseña {{ $usuario_id ? '(Dejar en blanco para no cambiar)' : '*' }}
                             </label>
                             <input wire:model="contrasena" type="password" autocomplete="new-password"
-                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
-                            @error('contrasena') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
+                            @error('contrasena') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Confirmar Contraseña</label>
                             <input wire:model="contrasena1" type="password" autocomplete="new-password"
-                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow">
-                            @error('contrasena1') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow">
+                            @error('contrasena1') <span class="text-red-500 text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
@@ -135,10 +135,10 @@
                 <button type="submit" 
                     wire:loading.attr="disabled" 
                     wire:target="enviarClick"
-                    class="px-5 py-2.5 text-sm font-bold text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="px-5 py-2.5 text-sm font-bold text-white bg-emap-blue hover:bg-blue-900 rounded-lg transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     
                     <span wire:loading.remove wire:target="enviarClick" class="flex items-center gap-2">
-                        <i class="fa-solid fa-check"></i> {{ $usuario_id ? 'Guardar Cambios' : 'Registrar' }}
+                        <i class="fa-solid fa-check"></i> {{ $usuario_id ? 'Guardar Cambios' : 'Registrar Personal' }}
                     </span>
 
                     <span wire:loading wire:target="enviarClick" class="flex items-center gap-2">

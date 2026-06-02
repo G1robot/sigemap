@@ -6,25 +6,25 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($viajes_activos as $viaje)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow relative">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:border-blue-200 transition-all relative">
                 
                 <div class="absolute top-4 right-4 flex items-center gap-1.5">
                     <span class="relative flex h-3 w-3">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                     </span>
-                    <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider">En la calle</span>
+                    <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider">En Operación</span>
                 </div>
 
                 <div class="p-6">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl shadow-inner">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-100 text-emap-blue flex items-center justify-center text-2xl shadow-inner border border-blue-200">
                             <i class="fa-solid fa-truck"></i>
                         </div>
                         <div>
                             <h3 class="text-xl font-black text-gray-800">Placa: {{ $viaje->camion->placa ?? 'N/A' }}</h3>
                             <p class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-0.5 rounded-full inline-block mt-1">
-                                Capacidad: {{ $viaje->camion->capacidad_ton ?? '0' }} Toneladas
+                                Capacidad: {{ $viaje->camion->capacidad_ton ?? '0' }} Ton.
                             </p>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                     </div>
 
                     <button wire:click="abrirPesaje({{ $viaje->id_asignacion }})" 
-                        class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        class="w-full bg-gray-800 hover:bg-emap-blue text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-weight-scale"></i> Registrar Descarga
                     </button>
                 </div>

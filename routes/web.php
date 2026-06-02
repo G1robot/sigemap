@@ -31,4 +31,6 @@ Route::middleware(['auth:web'])->group(function () {
 
     // Rutas para reportes
     Route::get('/reportes/dashboard', [ReporteController::class, 'dashboard'])->name('reportes.dashboard');
+    Route::get('/reportes/camiones', [ReporteController::class, 'reporteCamiones'])->name('reportes.camiones');
+    Route::get('/reportes/financiero', [ReporteController::class, 'reporteFinanciero'])->name('reportes.financiero');
 });

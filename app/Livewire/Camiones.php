@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\CamionModel;
 use App\Models\HistorialMantenimientoModel;
+use App\Models\AsignacionRutaModel;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
@@ -33,13 +34,19 @@ class Camiones extends Component
                 'required',
                 'string',
                 'max:15',
+                'regex:/^[0-9]{3,4}[ -]?[A-Za-z]{3}$/', 
                 Rule::unique('camiones', 'placa')->ignore($this->camion_id, 'id_camion') 
             ],
             'modelo' => 'nullable|string|max:50',
-            'capacidad_ton' => 'required|numeric|min:0.1',
+            'capacidad_ton' => 'required|numeric|min:0.1', 
             'dimension_tipo' => 'required|string|max:30',
         ];
     }
+
+    protected $messages = [
+        'placa.regex' => 'El formato debe ser válido (Ej: 1234-ABC o 123ABC).',
+        'capacidad_ton.min' => 'La capacidad no puede ser menor a 0.1',
+    ];
 
     public function render()
     {
@@ -78,19 +85,20 @@ class Camiones extends Component
     public function enviarClick()
     {
         $this->validate();
-        $placaMayuscula = strtoupper(trim($this->placa));
+        
+        $placaLimpia = strtoupper(str_replace([' ', '-'], '', trim($this->placa)));
 
         if ($this->camion_id) {
             $camion = CamionModel::find($this->camion_id);
             $camion->update([
-                'placa' => $placaMayuscula,
+                'placa' => $placaLimpia,
                 'modelo' => $this->modelo,
                 'capacidad_ton' => $this->capacidad_ton,
                 'dimension_tipo' => $this->dimension_tipo,
             ]);
         } else {
             CamionModel::create([
-                'placa' => $placaMayuscula,
+                'placa' => $placaLimpia,
                 'modelo' => $this->modelo,
                 'capacidad_ton' => $this->capacidad_ton,
                 'dimension_tipo' => $this->dimension_tipo,
@@ -122,8 +130,20 @@ class Camiones extends Component
         $this->dispatch('toast', ['icon' => 'success', 'title' => 'El camión está operativo nuevamente']);
     }
 
+    private function verificarSiEstaEnRuta($id)
+    {
+        return AsignacionRutaModel::where('id_camion', $id)
+            ->where('estado_operacion', 'En Ruta', 'Programada')
+            ->exists();
+    }
+
     public function eliminar($id) 
     {
+        if ($this->verificarSiEstaEnRuta($id)) {
+            $this->dispatch('toast', ['icon' => 'error', 'title' => 'Denegado: El camión está trabajando (En Ruta) actualmente.']);
+            return;
+        }
+
         $camion = CamionModel::findOrFail($id);
         $camion->estado_operativo = 'Fuera de Servicio';
         $camion->save();
@@ -132,6 +152,11 @@ class Camiones extends Component
 
     public function abrirMantenimiento($id)
     {
+        if ($this->verificarSiEstaEnRuta($id)) {
+            $this->dispatch('toast', ['icon' => 'error', 'title' => 'Denegado: El camión está trabajando (En Ruta) actualmente.']);
+            return;
+        }
+
         $this->camion_mantenimiento_id = $id;
         $this->mantenimiento_descripcion = '';
         $this->showMantenimientoModal = true;
@@ -146,6 +171,10 @@ class Camiones extends Component
 
     public function guardarMantenimiento()
     {
+        $this->validate([
+            'mantenimiento_descripcion' => 'required|string|max:255'
+        ]);
+
         HistorialMantenimientoModel::create([
             'id_camion' => $this->camion_mantenimiento_id,
             'fecha_ingreso' => Carbon::now()->toDateString(),
@@ -157,6 +186,6 @@ class Camiones extends Component
         $camion->save();
 
         $this->cerrarMantenimiento();
-        $this->dispatch('toast', ['icon' => 'warning', 'title' => 'Vehículo enviado al taller mecáncio']);
+        $this->dispatch('toast', ['icon' => 'warning', 'title' => 'Vehículo enviado al taller mecánico']);
     }
 }

@@ -1,4 +1,4 @@
-<div class="px-4">
+<div class="px-4 pb-10">
     
     <div class="mb-8">
         <h2 class="text-2xl font-black text-gray-800 tracking-tight">GESTIÓN DE ZONAS</h2>
@@ -6,8 +6,8 @@
     </div>
 
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <button wire:click="openModal()" class="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-map"></i> Nueva Zona
+        <button wire:click="openModal()" class="w-full md:w-auto bg-emap-blue hover:bg-blue-900 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-map-location-dot"></i> Nueva Zona
         </button>
 
         <div class="relative w-full md:w-80">
@@ -16,7 +16,7 @@
             </div>
             <input type="text" wire:model.live.debounce.300ms="search" 
                 placeholder="Buscar por nombre de zona..." 
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-shadow bg-gray-50 focus:bg-white text-sm">
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emap-blue transition-shadow bg-gray-50 focus:bg-white text-sm">
         </div>
     </div>
 
@@ -32,27 +32,27 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($zonas as $item)
-                        <tr wire:key="zona-{{ $item->id_zona }}" class="hover:bg-orange-50 transition-colors group">
+                        <tr wire:key="zona-{{ $item->id_zona }}" class="hover:bg-blue-50 transition-colors group">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="font-bold text-gray-900 flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
-                                        <i class="fa-solid fa-location-dot"></i>
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-emap-blue border border-blue-200 shadow-inner">
+                                        <i class="fa-solid fa-map"></i>
                                     </div>
                                     <span class="text-base font-black">{{ $item->nombre_zona }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-gray-600">
+                            <td class="px-6 py-4 text-gray-600 font-medium">
                                 {{ $item->descripcion ?: 'Sin descripción adicional' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="flex justify-end gap-1">
                                     <button wire:click.prevent="editar({{$item->id_zona}})" 
-                                        class="text-gray-400 hover:text-orange-600 transition p-2 rounded-lg hover:bg-orange-100" title="Editar Zona">
+                                        class="text-gray-400 hover:text-emap-blue transition p-2 rounded-lg hover:bg-blue-100" title="Editar Zona">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     
                                     <button wire:click.prevent="eliminar({{$item->id_zona}})" 
-                                        wire:confirm="¿Estás seguro de eliminar esta zona? Las rutas asociadas quedarán sin zona asignada."
+                                        wire:confirm="¿Estás seguro de eliminar esta zona?"
                                         class="text-gray-400 hover:text-red-600 transition p-2 rounded-lg hover:bg-red-100" title="Eliminar Zona">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -61,9 +61,10 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-12 text-center">
-                                <div class="text-gray-300 mb-3"><i class="fa-solid fa-map-location text-4xl"></i></div>
-                                <p class="text-gray-500">No hay zonas registradas o no coinciden con la búsqueda.</p>
+                            <td colspan="3" class="px-6 py-16 text-center">
+                                <div class="text-gray-200 mb-4"><i class="fa-solid fa-map-location-dot text-5xl"></i></div>
+                                <h3 class="text-lg font-bold text-gray-700 mb-1">Sin resultados</h3>
+                                <p class="text-gray-500">No hay zonas territoriales registradas.</p>
                             </td>
                         </tr>
                     @endforelse
