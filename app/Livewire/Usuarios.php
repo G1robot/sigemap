@@ -48,12 +48,6 @@ class Usuarios extends Component
                 'max:8',
                 'regex:/^[0-9]{1,8}$/'
             ],
-            // 'telefono' => [
-            //     'required',
-            //     'string',
-            //     'max:20',
-            //     'regex:/^[0-9()+\-\s]+(?:[eE]xt?\.?\s?\d+|x\d+)?$/'
-            // ],
             'cargo_base' => 'required|string|max:255',
         ];
 
@@ -67,7 +61,12 @@ class Usuarios extends Component
             $reglas['rol'] = 'required|in:Administrador,Supervisor,Operario';
             
             if (!$this->usuario_id || !empty($this->contrasena)) {
-                $reglas['contrasena'] = 'required|string|min:6';
+                $reglas['contrasena'] = [
+                    'required',
+                    'string',
+                    'min:8', 
+                    'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/'
+                ];
                 $reglas['contrasena1'] = 'required|string|same:contrasena';
             }
         }
@@ -80,7 +79,10 @@ class Usuarios extends Component
         'ci.regex' => 'El formato del C.I. es incorrecto (Ej: 1234567 o 1234567-1A).',
         'telefono.regex' => 'El formato del teléfono no es válido.',
         'usuario.unique' => 'ATENCIÓN: Este nombre de usuario ya está en uso, elige otro.',
+        'contrasena.min' => 'La seguridad es baja: La contraseña debe tener al menos 8 caracteres.',
+        'contrasena.regex' => 'La seguridad es baja: Debe incluir letras, números y al menos un carácter especial (Ej: @, $, !, %, *, ?).',
         'contrasena1.same' => 'Las contraseñas no coinciden.',
+        
         'nombre_completo.regex' => 'El nombre solo puede contener letras y espacios.'
     ];
 

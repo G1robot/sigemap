@@ -33,22 +33,43 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($asignaciones as $item)
-                        <tr wire:key="asignacion-{{ $item->id_asignacion }}" class="hover:bg-blue-50 transition-colors">
+                        
+                        @php
+                            $camionAveriado = ($item->estado_operacion === 'Programada' && $item->camion && $item->camion->estado_operativo !== 'Operativo');
+                        @endphp
+
+                        <tr wire:key="asignacion-{{ $item->id_asignacion }}" class="transition-colors {{ $camionAveriado ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-blue-50' }}">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="font-bold text-gray-900"><i class="fa-regular fa-calendar text-emap-blue mr-1"></i> {{ \Carbon\Carbon::parse($item->fecha)->format('d/m/Y') }}</div>
-                                <div class="text-xs text-gray-500 mt-1"><i class="fa-regular fa-clock mr-1"></i> {{ $item->turno }}</div>
+                                <div class="font-bold {{ $camionAveriado ? 'text-red-900' : 'text-gray-900' }}">
+                                    <i class="fa-regular fa-calendar {{ $camionAveriado ? 'text-red-500' : 'text-emap-blue' }} mr-1"></i> 
+                                    {{ \Carbon\Carbon::parse($item->fecha)->format('d/m/Y') }}
+                                </div>
+                                <div class="text-xs {{ $camionAveriado ? 'text-red-500' : 'text-gray-500' }} mt-1">
+                                    <i class="fa-regular fa-clock mr-1"></i> {{ $item->turno }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="font-bold text-gray-800">{{ $item->ruta?->nombre_ruta ?? 'Ruta Eliminada' }}</div>
-                                <div class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-truck text-gray-400 mr-1"></i> {{ $item->camion?->placa ?? 'Camión Eliminado' }}</div>
+                                <div class="font-bold {{ $camionAveriado ? 'text-red-800' : 'text-gray-800' }}">{{ $item->ruta?->nombre_ruta ?? 'Ruta Eliminada' }}</div>
+                                
+                                <div class="text-xs font-bold mt-1 {{ $camionAveriado ? 'text-red-600 bg-red-100 inline-block px-2 py-0.5 rounded' : 'text-gray-500' }}">
+                                    <i class="fa-solid {{ $camionAveriado ? 'fa-triangle-exclamation' : 'fa-truck' }} {{ $camionAveriado ? '' : 'text-gray-400' }} mr-1"></i> 
+                                    {{ $item->camion?->placa ?? 'Camión Eliminado' }}
+                                    @if($camionAveriado)
+                                        (En {{ $item->camion->estado_operativo }})
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">
+                                <span class="{{ $camionAveriado ? 'bg-red-100 text-red-700 border-red-200' : 'bg-blue-50 text-blue-700 border-blue-100' }} px-3 py-1 rounded-full text-xs font-bold border">
                                     <i class="fa-solid fa-users mr-1"></i> {{ $item->detallesCuadrilla->count() }} Asignados
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                @if($item->estado_operacion == 'Programada')
+                                @if($camionAveriado)
+                                    <span class="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-sm">
+                                        <i class="fa-solid fa-ban mr-1"></i> CAMIÓN NO DISPONIBLE
+                                    </span>
+                                @elseif($item->estado_operacion == 'Programada')
                                     <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold border border-gray-200">PROGRAMADA</span>
                                 @elseif($item->estado_operacion == 'En Ruta')
                                     <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200"><i class="fa-solid fa-truck-fast mr-1"></i> EN RUTA</span>
@@ -58,15 +79,22 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="flex justify-end gap-1">
-                                    <button wire:click="abrirAsistencia({{ $item->id_asignacion }})" 
-                                        class="text-gray-500 hover:text-emap-blue transition p-2 rounded-lg hover:bg-blue-100" title="Ver Cuadrilla / Tomar Asistencia">
-                                        <i class="fa-solid fa-clipboard-user text-lg"></i>
-                                    </button>
+                                    
+                                    @if(!$camionAveriado)
+                                        <button wire:click="abrirAsistencia({{ $item->id_asignacion }})" 
+                                            class="text-gray-500 hover:text-emap-blue transition p-2 rounded-lg hover:bg-blue-100" title="Ver Cuadrilla / Tomar Asistencia">
+                                            <i class="fa-solid fa-clipboard-user text-lg"></i>
+                                        </button>
+                                    @else
+                                        <button disabled class="text-red-300 p-2 rounded-lg cursor-not-allowed" title="Operación bloqueada por falla en vehículo">
+                                            <i class="fa-solid fa-clipboard-user text-lg"></i>
+                                        </button>
+                                    @endif
                                     
                                     @if($item->estado_operacion == 'Programada')
                                         <button wire:click.prevent="eliminar({{$item->id_asignacion}})" 
                                             wire:confirm="¿Seguro que deseas eliminar esta planificación?"
-                                            class="text-gray-400 hover:text-red-600 transition p-2 rounded-lg hover:bg-red-100" title="Eliminar">
+                                            class="{{ $camionAveriado ? 'text-red-500 bg-red-100 hover:bg-red-200' : 'text-gray-400 hover:text-red-600 hover:bg-red-100' }} transition p-2 rounded-lg" title="Eliminar Asignación">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     @else

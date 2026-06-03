@@ -50,8 +50,13 @@ class Asignaciones extends Component
             ->orderBy('id_asignacion', 'desc')
             ->paginate(10);
 
-        $rutas = RutaModel::with('zona')->orderBy('nombre_ruta', 'asc')->get();
+        $rutas = RutaModel::where('estado', 'Activo')
+                    ->with('zona')
+                    ->orderBy('nombre_ruta', 'asc')
+                    ->get();
+
         $camiones = CamionModel::where('estado_operativo', 'Operativo')->get();
+        
         $personal = UsuarioModel::where('estado', 'Activo')
                         ->where('cargo_base', '!=', 'Administrador')
                         ->orderBy('nombre_completo', 'asc')
@@ -133,12 +138,13 @@ class Asignaciones extends Component
     public function guardarPlanificacion()
     {
         $this->validate([
-            'fecha' => 'required|date|after_or_equal:today',
+            'fecha' => 'required|date|after_or_equal:today|before_or_equal:+30 days',
             'turno' => 'required',
             'id_ruta' => 'required',
             'id_camion' => 'required',
         ], [
-            'fecha.after_or_equal' => 'No puedes programar rutas en fechas que ya pasaron.'
+            'fecha.after_or_equal' => 'No puedes programar rutas en fechas que ya pasaron.',
+            'fecha.before_or_equal' => 'La fecha no puede exceder los 30 días de anticipación operativa.',
         ]);
 
         $contingencia = ContingenciaParoModel::where('fecha', $this->fecha)->first();
