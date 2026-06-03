@@ -26,6 +26,8 @@ Route::middleware(['auth:web'])->group(function () {
     // -------------------------------------------------------------
     Route::middleware([CheckRol::class.':Administrador,Supervisor,Operario'])->group(function () {
         Route::get('/botaderos', [BotaderoController::class, 'index'])->name('botaderos');
+        Route::get('/rutas', [RutaController::class, 'index'])->name('rutas');
+        Route::get('/rutas/gestor', [RutaController::class, 'gestorRutas'])->name('rutas.gestor');
     });
 
     // -------------------------------------------------------------
@@ -50,7 +52,7 @@ Route::middleware(['auth:web'])->group(function () {
         Route::get('/rutas', [RutaController::class, 'index'])->name('rutas');
         Route::get('/rutas/zonas', [RutaController::class, 'zonas'])->name('rutas.zonas');
         Route::get('/rutas/lista', [RutaController::class, 'rutaLista'])->name('rutas.lista');
-        Route::get('/rutas/gestor', [RutaController::class, 'gestorRutas'])->name('rutas.gestor');
+        
         Route::get('/reportes/camiones', [ReporteController::class, 'reporteCamiones'])->name('reportes.camiones');
     });
 });
